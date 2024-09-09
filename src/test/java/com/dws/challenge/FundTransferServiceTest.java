@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.math.BigDecimal;
 
+import com.dws.challenge.exception.AccountDoesNotExistException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,12 +44,8 @@ class FundTransferServiceTest {
         toAccount.setBalance(new BigDecimal(500));
         this.accountsService.createAccount(toAccount);
 
-        try {
-            this.fundTransferService.transfer(fromAccount.getAccountId(), toAccount.getAccountId(), new BigDecimal("200"));
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        this.fundTransferService.transfer(fromAccount.getAccountId(), toAccount.getAccountId(), new BigDecimal("200"));
+
         assertEquals(new BigDecimal("800"), fromAccount.getBalance());
         assertEquals(new BigDecimal("700"), toAccount.getBalance());
 
@@ -68,8 +65,6 @@ class FundTransferServiceTest {
             this.fundTransferService.transfer(fromAccount.getAccountId(), toAccount.getAccountId(), new BigDecimal("2500"));
         } catch (IllegalArgumentException ex) {
             assertThat(ex.getMessage()).isEqualTo("Insufficient balance.");
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
@@ -87,8 +82,6 @@ class FundTransferServiceTest {
             this.fundTransferService.transfer(fromAccount.getAccountId(), toAccount.getAccountId(), new BigDecimal("-150"));
         } catch (IllegalArgumentException ex) {
             assertThat(ex.getMessage()).isEqualTo("Transfer amount must be positive");
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
@@ -99,12 +92,9 @@ class FundTransferServiceTest {
         this.accountsService.createAccount(toAccount);
 
         try {
-            try {
-                this.fundTransferService.transfer("Id-001", toAccount.getAccountId(), new BigDecimal("-150"));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } catch (IllegalArgumentException ex) {
+            this.fundTransferService.transfer("Id-001", toAccount.getAccountId(), new BigDecimal("150"));
+
+        } catch (AccountDoesNotExistException ex) {
             assertThat(ex.getMessage()).isEqualTo("From account not found");
         }
     }

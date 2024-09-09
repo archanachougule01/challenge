@@ -24,7 +24,15 @@ public class FundTransferService {
         this.notificationService = notificationService;
     }
 
-    public synchronized void transfer(String fromAccountId, String toAccountId, BigDecimal amount) throws Exception {
+    /**
+     * Transfer funds from one account to another account.
+     * @param fromAccountId the ID of account from which the funds will be withdrawn
+     * @param toAccountId the ID of account to which funds will be deposited
+     * @param amount the amount of money to be transferred
+     * @throws Exception
+     *
+     */
+    public synchronized void transfer(String fromAccountId, String toAccountId, BigDecimal amount) throws AccountDoesNotExistException, IllegalArgumentException {
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Transfer amount must be positive");
         }
